@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MNF_PORTAL_Core;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
-using MNF_PORTAL_Infrastructure;
-using MNF_PORTAL_Infrastructure.Data;
-using MNF_PORTAL_Infrastructure.Repositories;
+
 using MNF_PORTAL_Service.Interfaces;
 using MNF_PORTAL_Service.Services;
 using System.Runtime.InteropServices.JavaScript;
@@ -37,6 +35,12 @@ namespace MNF_PORTAL_API
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
+            builder.Services.AddTransient<IUserRepository,UserRepository>();
+            builder.Services.AddTransient<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddTransient<IUserService, UserService>();
+
+
+
             var app = builder.Build();
 
 
@@ -48,7 +52,7 @@ namespace MNF_PORTAL_API
             }
 
             /*=================== Mahmoud =====================*/
-
+            
 
 
 
