@@ -1,10 +1,10 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MNF_PORTAL_Core;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
-using MNF_PORTAL_Infrastructure.Data;
-using MNF_PORTAL_Infrastructure.Implementation_Repos;
+
 using MNF_PORTAL_Service.Interfaces;
 using MNF_PORTAL_Service.Services;
 using System.Runtime.InteropServices.JavaScript;
@@ -25,6 +25,10 @@ namespace MNF_PORTAL_API
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IRoleService, RoleService>();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
             // Configure Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
