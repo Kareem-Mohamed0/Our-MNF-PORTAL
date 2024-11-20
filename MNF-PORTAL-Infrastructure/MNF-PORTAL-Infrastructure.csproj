@@ -23,8 +23,4 @@
     <ProjectReference Include="..\MNF-PORTAL-Service\MNF-PORTAL-Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Implementation-Repos\" />
-  </ItemGroup>
-
 </Project>
