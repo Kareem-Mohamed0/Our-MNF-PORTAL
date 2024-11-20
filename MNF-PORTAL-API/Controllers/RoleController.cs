@@ -49,7 +49,51 @@ namespace MNF_PORTAL_API.Controllers
             }
             return Ok(Roles);
         }
-
+        [HttpDelete("DeleteRole")]
+        public async Task<IActionResult> DeleteRole(string RoleName)
+        {
+            try
+            {
+                var result = await RoleService.RemoveRoleAsync(RoleName);
+                if (!result)
+                    return BadRequest("Role Is Not Deleted");
+                return Ok("Role Deleted  Successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Handle other unexpected exceptions
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPut("UpdateRole")]
+        public async Task<IActionResult> UpdateRole(string RoleName, string NewRoleName)
+        {
+            try
+            {
+                var result = await RoleService.UpdateRoleAsync(RoleName, NewRoleName);
+                if (!result)
+                    return BadRequest("Role Is Not Updated");
+                return Ok("Role Updated  Successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Handle other unexpected exceptions
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+       
 
     }
 }

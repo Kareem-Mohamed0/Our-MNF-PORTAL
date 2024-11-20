@@ -50,17 +50,9 @@ namespace MNF_PORTAL_Infrastructure.Repositories
 
         public async Task<bool> RoleIsExistAsync(string roleName)
         {
-            return false;
-            //try
-            //{
-            //    var role = await roleManager.FindByNameAsync(roleName);
-            //    return role != null;
-            //}
-            //catch (Exception)
-            //{
-            //    return false;
-            //}
-             // Returns true if role is found, false if not
+                var role = await roleManager.FindByNameAsync(roleName);
+                return role != null;
+            // Returns true if role is found, false if not
         }
 
 
@@ -69,8 +61,8 @@ namespace MNF_PORTAL_Infrastructure.Repositories
             var Role = await roleManager.FindByNameAsync(OldRoleName);
             if (Role == null) return false;
             Role.Name = NewRoleName;
-            var result = roleManager.UpdateAsync(Role);
-            return result.IsCompletedSuccessfully;
+            //var result = roleManager.UpdateAsync(Role);
+            return true;
         }
     }
 }

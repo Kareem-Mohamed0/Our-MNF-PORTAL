@@ -10,10 +10,12 @@ namespace MNF_PORTAL_Infrastructure
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext context;
+        public IUserRepository UserRepository { get; }
         public IRoleRepository RoleRepository { get; set; }
-        public UnitOfWork(AppDbContext context,IRoleRepository roleRepository)
+        public UnitOfWork(AppDbContext context,IRoleRepository roleRepository,IUserRepository userRepository)
         {
             this.RoleRepository = roleRepository; 
+            this.UserRepository = userRepository;
             this.context = context;
         }
 

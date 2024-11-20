@@ -69,23 +69,38 @@ namespace MNF_PORTAL_Service.Services
         /*=========================== Remove Role By Name ==============================*/
         public async Task<bool> RemoveRoleAsync(string roleName)
         {
-            await unitOfWork.RoleRepository.RemoveRoleAsync(roleName);
-            return await unitOfWork.CompleteAsync();
+            if (string.IsNullOrEmpty(roleName))
+            {
+                throw new ArgumentNullException(nameof(roleName), "Role name cannot be null or empty.");
+            }
+            if(!await unitOfWork.RoleRepository.RoleIsExistAsync(roleName))
+            {
+                throw new ArgumentException($"The role '{roleName}' does not exist.");
+            }
+            var result = await unitOfWork.RoleRepository.RemoveRoleAsync(roleName);
+            if (!result)
+            {
+                throw new InvalidOperationException(message: "Failed to remove the role.");
+            }
+            return result;
         }
         /*=========================== update Role ==============================*/
-        public async Task<bool> updateRoleAsync(string OldRoleName, string NewRoleName)
+        public async Task<bool> UpdateRoleAsync(string OldRoleName, string NewRoleName)
         {
-            if (string.IsNullOrEmpty(NewRoleName))
+            if (string.IsNullOrEmpty(NewRoleName) || string.IsNullOrEmpty(OldRoleName))
             {
                 throw new ArgumentNullException(nameof(NewRoleName), "Role name cannot be null or empty.");
             }
-            if(string.IsNullOrEmpty(OldRoleName))
+            if (!await unitOfWork.RoleRepository.RoleIsExistAsync(OldRoleName))
             {
-                throw new ArgumentNullException(nameof(OldRoleName), "Role name cannot be null or empty.");
-            }
-            if(!await unitOfWork.RoleRepository.RoleIsExistAsync(OldRoleName))
                 throw new ArgumentException($"The role '{OldRoleName}' does not exist.");
-            return await unitOfWork.RoleRepository.UpdateRoleAsync(OldRoleName, NewRoleName);
+            }
+            var result = await unitOfWork.RoleRepository.UpdateRoleAsync(OldRoleName, NewRoleName);
+            if (!result)
+            {
+                throw new InvalidOperationException(message: "Failed to update the role.");
+            }
+            return await unitOfWork.CompleteAsync();
         }
     }
 }

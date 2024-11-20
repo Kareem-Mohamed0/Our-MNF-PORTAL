@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MNF_PORTAL_Core;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
 using MNF_PORTAL_Service.DTOs;
@@ -60,7 +61,7 @@ namespace MNF_PORTAL_Service.Services
             IdentityResult result = await _unitOfWork.UserRepository.CreateUserAsync(user, Password);
             if (result.Succeeded)
             {
-                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
                 return result;
             }
            
@@ -73,7 +74,7 @@ namespace MNF_PORTAL_Service.Services
             if (user == null) return false;
 
             await _unitOfWork.UserRepository.DeleteUserAsync(user);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CompleteAsync();
             return true;
         }
 
@@ -94,7 +95,7 @@ namespace MNF_PORTAL_Service.Services
 
             await _unitOfWork.UserRepository.UpdateUserAsync(user);
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CompleteAsync();
             return true;
         }
     }

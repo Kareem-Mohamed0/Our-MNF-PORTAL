@@ -14,6 +14,6 @@ namespace MNF_PORTAL_Service.Interfaces
         public Task<DisplayRoleDTO> GetRoleByIdAsync(string RoleId);
         public Task<bool> AddRoleAsync(string role);
         public Task<bool> RemoveRoleAsync(string roleName);
-        public Task<bool> updateRoleAsync(string OldRoleName, string NewRoleName);
+        public Task<bool> UpdateRoleAsync(string OldRoleName, string NewRoleName);
     }
 }
