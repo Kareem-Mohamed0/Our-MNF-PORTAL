@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Service.DTOs;
@@ -57,6 +58,27 @@ namespace MNF_PORTAL_API.Controllers
 
             return BadRequest(result.Errors);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUserManager(string id, [FromBody] DetailsUserDTO userDto)
+        {
+            if (string.IsNullOrEmpty(id) || userDto == null)
+            {
+                return BadRequest("Invalid user ID or data.");
+            }
+             bool result = await _userService.UpdateUserAsync(id, userDto);
+            if (result) { return Ok("User Updated successfully."); }
+         
+            return BadRequest("Invalid user ID or data.");
+        }
+
+
+
+
+
+
+
+
 
         // Delete a user
         [HttpDelete("{id}")]

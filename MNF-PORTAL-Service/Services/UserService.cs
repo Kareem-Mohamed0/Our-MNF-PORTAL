@@ -31,6 +31,7 @@ namespace MNF_PORTAL_Service.Services
                 Email=userDB.Email
             
             };
+          
             return userDTO;
         }
 
@@ -50,6 +51,7 @@ namespace MNF_PORTAL_Service.Services
                 };
                 usersDTO.Add(userDTO);
             }
+           
             return usersDTO;
         }
 
@@ -71,6 +73,27 @@ namespace MNF_PORTAL_Service.Services
             if (user == null) return false;
 
             await _unitOfWork.UserRepository.DeleteUserAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateUserAsync(string userId, DetailsUserDTO userDto)
+        {
+            
+            // Find the user
+            ApplicationUser user = await _unitOfWork.UserRepository.GetUserByIdAsync(userId);
+
+            if (user == null) 
+            {
+                return false ;
+            }
+            // Update user properties
+            user.Email = userDto.Email;
+            user.UserName = userDto.User_Name;
+            user.FullName = userDto.Full_Name;
+
+            await _unitOfWork.UserRepository.UpdateUserAsync(user);
+
             await _unitOfWork.SaveChangesAsync();
             return true;
         }

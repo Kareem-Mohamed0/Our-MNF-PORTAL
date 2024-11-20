@@ -14,6 +14,7 @@ namespace MNF_PORTAL_Service.Interfaces
         Task<DetailsUserDTO> GetUserByIdAsync(string userId);
         Task<IEnumerable<DetailsUserDTO>> GetAllUsersAsync();
         Task<IdentityResult> CreateUserAsync(ApplicationUser user, string Password);
+        Task<bool> UpdateUserAsync(string userId, DetailsUserDTO user);
         Task<bool> DeleteUserAsync(string userId);
     }
 }

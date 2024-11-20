@@ -14,6 +14,7 @@ namespace MNF_PORTAL_Core.Interfaces_Repos
         Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
         Task<IdentityResult> CreateUserAsync(ApplicationUser user, string password);
+        Task<IdentityResult> UpdateUserAsync(ApplicationUser user);
         Task<IdentityResult> AddUserToRoleAsync(ApplicationUser user, string role);
         Task<IdentityResult> DeleteUserAsync(ApplicationUser user);
     }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
+using MNF_PORTAL_Service.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +45,17 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
         {
             return await _userManager.AddToRoleAsync(user, role);
         }
+
+
+
+    
+        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
+        {
+         
+       return   await _userManager.UpdateAsync(user);
+        }
+
+
 
         public async Task<IdentityResult> DeleteUserAsync(ApplicationUser user)
         {
