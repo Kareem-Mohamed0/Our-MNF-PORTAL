@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using MNF_PORTAL_Core;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
@@ -85,17 +86,17 @@ namespace MNF_PORTAL_Service.Services
             return result;
         }
         /*=========================== update Role ==============================*/
-        public async Task<bool> UpdateRoleAsync(string OldRoleName, string NewRoleName)
+        public async Task<bool> UpdateRoleAsync(UpdateRoleDTO model)
         {
-            if (string.IsNullOrEmpty(NewRoleName) || string.IsNullOrEmpty(OldRoleName))
+            if (string.IsNullOrEmpty(model.NewRole) || string.IsNullOrEmpty(model.OldRole))
             {
-                throw new ArgumentNullException(nameof(NewRoleName), "Role name cannot be null or empty.");
+                throw new ArgumentNullException(nameof(model.NewRole), "Role name cannot be null or empty.");
             }
-            if (!await unitOfWork.RoleRepository.RoleIsExistAsync(OldRoleName))
+            if (!await unitOfWork.RoleRepository.RoleIsExistAsync(model.OldRole))
             {
-                throw new ArgumentException($"The role '{OldRoleName}' does not exist.");
+                throw new ArgumentException($"The role '{model.OldRole}' does not exist.");
             }
-            var result = await unitOfWork.RoleRepository.UpdateRoleAsync(OldRoleName, NewRoleName);
+            var result = await unitOfWork.RoleRepository.UpdateRoleAsync(model.OldRole, model.NewRole);
             if (!result)
             {
                 throw new InvalidOperationException(message: "Failed to update the role.");

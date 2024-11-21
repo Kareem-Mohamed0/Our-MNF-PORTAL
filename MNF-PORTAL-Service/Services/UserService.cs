@@ -127,5 +127,20 @@ namespace MNF_PORTAL_Service.Services
             await _unitOfWork.CompleteAsync();
             return IdentityResult.Success;
         }
+
+        public Task<ApplicationUser> GetUserByUserNameAsync(string userName)
+        {
+            return _unitOfWork.UserRepository.GetUserByUserNameAsync(userName);
+        }
+
+        public Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        {
+            return _unitOfWork.UserRepository.CheckPasswordAsync(user, password);
+        }
+
+        public Task<IList<string>> GetUserRolesAsync(ApplicationUser user)
+        {
+            return _unitOfWork.UserRepository.GetUserRolesAsync(user);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
@@ -7,6 +8,7 @@ namespace MNF_PORTAL_API.Controllers
 
     [ApiController]
     [Route("API/Role")]
+    //[Authorize(Roles = "Admin")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService RoleService;
@@ -16,7 +18,7 @@ namespace MNF_PORTAL_API.Controllers
             this.RoleService = roleservice;
         }
         [HttpPost("AddRole")]
-        public async Task<IActionResult> AddRole( string RoleName)
+        public async Task<IActionResult> AddRole([FromBody] string RoleName)
         {
             try
             {
@@ -36,6 +38,7 @@ namespace MNF_PORTAL_API.Controllers
             }
         }
 
+        
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -52,7 +55,7 @@ namespace MNF_PORTAL_API.Controllers
         }
 
         [HttpDelete("DeleteRole")]
-        public async Task<IActionResult> DeleteRole(string RoleName)
+        public async Task<IActionResult> DeleteRole([FromBody] string RoleName)
         {
             try
             {
@@ -77,11 +80,11 @@ namespace MNF_PORTAL_API.Controllers
         }
 
         [HttpPut("UpdateRole")]
-        public async Task<IActionResult> UpdateRole(string RoleName, string NewRoleName)
+        public async Task<IActionResult> UpdateRole([FromForm]UpdateRoleDTO model)
         {
             try
             {
-                var result = await RoleService.UpdateRoleAsync(RoleName, NewRoleName);
+                var result = await RoleService.UpdateRoleAsync( model);
                 if (!result)
                     return BadRequest("Role Is Not Updated");
                 return Ok("Role Updated  Successfully");

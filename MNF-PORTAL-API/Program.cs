@@ -1,6 +1,9 @@
 
+using Infrastructure.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MNF_PORTAL_Core;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
@@ -11,6 +14,7 @@ using MNF_PORTAL_Infrastructure.Repositories;
 using MNF_PORTAL_Service.Interfaces;
 using MNF_PORTAL_Service.Services;
 using System.Runtime.InteropServices.JavaScript;
+using System.Text;
 
 namespace MNF_PORTAL_API
 {
@@ -41,6 +45,33 @@ namespace MNF_PORTAL_API
             builder.Services.AddTransient<IUserRepository,UserRepository>();
             builder.Services.AddTransient<IUnitOfWork,UnitOfWork>();
             builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<IJwtService, JwtService>();
+
+
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
+
+            builder.Services.AddAuthorization();
+
 
 
 
@@ -53,36 +84,7 @@ namespace MNF_PORTAL_API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            /*=================== Mahmoud =====================*/
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-            ////////////////////////////////////////
-            /*===================== kareem ==========================*/
-
-
-            //////////////////////////////////////////////////////
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
