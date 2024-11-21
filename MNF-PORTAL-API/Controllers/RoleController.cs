@@ -8,7 +8,7 @@ namespace MNF_PORTAL_API.Controllers
 
     [ApiController]
     [Route("API/Role")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService RoleService;
@@ -80,8 +80,12 @@ namespace MNF_PORTAL_API.Controllers
         }
 
         [HttpPut("UpdateRole")]
-        public async Task<IActionResult> UpdateRole([FromForm]UpdateRoleDTO model)
+        public async Task<IActionResult> UpdateRole([FromBody]UpdateRoleDTO model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
                 var result = await RoleService.UpdateRoleAsync( model);
