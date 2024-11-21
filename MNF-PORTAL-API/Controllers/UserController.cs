@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Infrastructure.Jwt;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MNF_PORTAL_Core.Entities;
+using MNF_PORTAL_Core.Interfaces_Repos;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
-using MNF_PORTAL_Service.Services;
 
 namespace MNF_PORTAL_API.Controllers
 {
@@ -13,10 +14,12 @@ namespace MNF_PORTAL_API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IJwtService jwtService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService,IJwtService JwtService)
         {
             _userService = userService;
+            jwtService = JwtService;
         }
 
 
@@ -114,6 +117,19 @@ namespace MNF_PORTAL_API.Controllers
             return Ok("User deleted successfully.");
         }
 
+        /*---------------------------------------- login ----------------------------------------*/
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        {
+            var user = await _userService.GetUserByUserNameAsync(dto.Username);
+            if (user == null || !await _userService.CheckPasswordAsync(user, dto.Password))
+                return Unauthorized("Invalid credentials.");
+
+            var roles = await _userService.GetUserRolesAsync(user);
+            var token = jwtService.GenerateToken(user, roles);
+
+            return Ok(new { Token = token });
+        }
 
     }
 }

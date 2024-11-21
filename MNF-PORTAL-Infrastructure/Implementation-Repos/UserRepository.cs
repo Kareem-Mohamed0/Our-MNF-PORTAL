@@ -59,8 +59,7 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
 
         public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
-         
-       return   await _userManager.UpdateAsync(user);
+            return   await _userManager.UpdateAsync(user);
         }
 
 
@@ -72,6 +71,19 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
             return await _userManager.DeleteAsync(user);
         }
 
+        public async Task<ApplicationUser> GetUserByUserNameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if(user == null)
+            {
+                throw new Exception("User not found");
+            }
+            return user;
+        }
 
+        public Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        {
+            return _userManager.CheckPasswordAsync(user, password);
+        }
     }
 }
