@@ -51,8 +51,16 @@ namespace MNF_PORTAL_API.Controllers
                 UserName = model.User_Name,
                 Email = model.Email
             };
-
             var result = await _userService.CreateUserAsync(user, model.PassWord);
+            if (model.Roles != null) 
+            {
+                var UserWithRoles = new AddRoleToUserDTO
+                {
+                    UserId = user.Id,
+                    Roles = model.Roles
+                };
+                await _userService.AddUserToRoleAsync(UserWithRoles);
+            }
             if (result.Succeeded)
                 return Ok("User created successfully.");
 
@@ -74,7 +82,22 @@ namespace MNF_PORTAL_API.Controllers
 
 
 
+        [HttpPost("AddRolesToUser")]
+        public async Task<IActionResult> AddRolesToUser([FromBody] AddRoleToUserDTO model)
+        {
+                if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+
+               var result = await _userService.AddUserToRoleAsync(model);
+           
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok("Roles added to User successfully.");
+        }
 
 
 

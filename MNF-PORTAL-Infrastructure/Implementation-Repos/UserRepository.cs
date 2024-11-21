@@ -46,9 +46,17 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
             return await _userManager.AddToRoleAsync(user, role);
         }
 
+        public async Task<IdentityResult> RemoveUserFromRoleAsync(ApplicationUser user, string role)
+        {
+            // Remove the user from the role
+            
+            return await _userManager.RemoveFromRoleAsync(user, role);
+        }
+        
 
 
-    
+
+
         public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
          
