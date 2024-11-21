@@ -35,6 +35,7 @@ namespace MNF_PORTAL_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -49,6 +50,7 @@ namespace MNF_PORTAL_API.Controllers
             }
             return Ok(Roles);
         }
+
         [HttpDelete("DeleteRole")]
         public async Task<IActionResult> DeleteRole(string RoleName)
         {
@@ -73,6 +75,7 @@ namespace MNF_PORTAL_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
         [HttpPut("UpdateRole")]
         public async Task<IActionResult> UpdateRole(string RoleName, string NewRoleName)
         {
@@ -93,7 +96,5 @@ namespace MNF_PORTAL_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-       
-
     }
 }

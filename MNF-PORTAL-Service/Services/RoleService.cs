@@ -100,7 +100,8 @@ namespace MNF_PORTAL_Service.Services
             {
                 throw new InvalidOperationException(message: "Failed to update the role.");
             }
-            return await unitOfWork.CompleteAsync();
+            //return await unitOfWork.CompleteAsync();
+            return true;
         }
     }
 }
