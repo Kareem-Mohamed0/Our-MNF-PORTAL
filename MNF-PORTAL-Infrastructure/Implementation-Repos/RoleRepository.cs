@@ -4,6 +4,7 @@ using MNF_PORTAL_Core.Interfaces_Repos;
 using MNF_PORTAL_Infrastructure.Data;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,7 +62,8 @@ namespace MNF_PORTAL_Infrastructure.Repositories
             var Role = await roleManager.FindByNameAsync(OldRoleName);
             if (Role == null) return false;
             Role.Name = NewRoleName;
-            //var result = roleManager.UpdateAsync(Role);
+            Role.NormalizedName = NewRoleName.ToUpper();
+            var result =await roleManager.UpdateAsync(Role);
             return true;
         }
     }
