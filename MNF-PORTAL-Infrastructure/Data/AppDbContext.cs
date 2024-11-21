@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MNF_PORTAL_Core.Entities;
+using MNF_PORTAL_Service.DTOs;
+using System.Reflection.Emit;
 
 namespace MNF_PORTAL_Infrastructure.Data
 {
@@ -13,6 +16,8 @@ namespace MNF_PORTAL_Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            
         }
     }
 }
