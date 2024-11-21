@@ -12,5 +12,6 @@ namespace MNF_PORTAL_Service.DTOs
         public string User_Name { get; set; }
         public string PassWord { get; set; }
         public string Email { get; set; }
+        public IList<string> Roles { get; set; }
     }
 }
