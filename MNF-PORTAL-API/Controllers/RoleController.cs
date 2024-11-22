@@ -1,8 +1,10 @@
 ﻿
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
+using MNF_PORTAL_Service.Validators;
 namespace MNF_PORTAL_API.Controllers
 {
 
@@ -22,6 +24,15 @@ namespace MNF_PORTAL_API.Controllers
         {
             try
             {
+
+                var validator = new RoleValidator();
+                var validationResult = await validator.ValidateAsync(RoleName);
+
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(validationResult.Errors);
+                }
+
                 var result = await RoleService.AddRoleAsync(RoleName);
                 if(!result)
                     return BadRequest("Role Is Not Added");
@@ -82,6 +93,20 @@ namespace MNF_PORTAL_API.Controllers
         [HttpPut("UpdateRole")]
         public async Task<IActionResult> UpdateRole([FromBody]UpdateRoleDTO model)
         {
+
+            var validator = new RoleValidator();
+            var validationResult = await validator.ValidateAsync(model.OldRole);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+            validationResult = await validator.ValidateAsync(model.NewRole);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

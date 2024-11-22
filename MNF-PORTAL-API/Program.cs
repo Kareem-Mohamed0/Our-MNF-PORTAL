@@ -39,8 +39,8 @@ namespace MNF_PORTAL_API
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ASP.NET 8 Web API",
-                    Description = " ITI Project"
+                    Title = "User and Role Management API",
+                    Description = " Portal Project "
                 });
                 // To Enable authorization using Swagger (JWT)    
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()

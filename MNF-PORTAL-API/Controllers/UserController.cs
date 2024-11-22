@@ -1,4 +1,5 @@
-﻿using Infrastructure.Jwt;
+﻿using FluentValidation;
+using Infrastructure.Jwt;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,8 @@ using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
+using MNF_PORTAL_Service.Validators;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MNF_PORTAL_API.Controllers
 {
@@ -45,6 +48,24 @@ namespace MNF_PORTAL_API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser([FromBody] RegisterUserDTO model)
         {
+
+            var validator = new UserValidator();
+            var newuser = new DetailsUserDTO() 
+            {   Full_Name = model.Full_Name,
+                User_Name = model.User_Name, 
+                Email = model.Email
+                
+            };
+            var validationResult = await validator.ValidateAsync(newuser);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+
+
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -77,7 +98,18 @@ namespace MNF_PORTAL_API.Controllers
             {
                 return BadRequest("Invalid user ID or data.");
             }
-             bool result = await _userService.UpdateUserAsync(id, userDto);
+            var validator = new UserValidator();
+            var validationResult = await validator.ValidateAsync(userDto);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+
+
+
+            bool result = await _userService.UpdateUserAsync(id, userDto);
             if (result) { return Ok("User Updated successfully."); }
          
             return BadRequest("Invalid user ID or data.");
