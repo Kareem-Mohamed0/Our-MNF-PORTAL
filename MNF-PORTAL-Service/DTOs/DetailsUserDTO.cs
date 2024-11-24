@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MNF_PORTAL_Service.DTOs
+﻿namespace MNF_PORTAL_Service.DTOs
 {
     public class DetailsUserDTO
     {
@@ -13,5 +7,6 @@ namespace MNF_PORTAL_Service.DTOs
         public string User_Name { get; set; }
         public string Email { get; set; }
         public IList<string> Roles { get; set; }
+        public bool IsActive { get; set; }
     }
 }

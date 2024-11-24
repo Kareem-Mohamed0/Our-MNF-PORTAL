@@ -1,14 +1,9 @@
-﻿using FluentValidation;
-using Infrastructure.Jwt;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
 using MNF_PORTAL_Service.Validators;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace MNF_PORTAL_API.Controllers
 {
@@ -19,7 +14,7 @@ namespace MNF_PORTAL_API.Controllers
         private readonly IUserService _userService;
         private readonly IJwtService jwtService;
 
-        public UserController(IUserService userService,IJwtService JwtService)
+        public UserController(IUserService userService, IJwtService JwtService)
         {
             _userService = userService;
             jwtService = JwtService;
@@ -43,6 +38,17 @@ namespace MNF_PORTAL_API.Controllers
 
             return Ok(user);
         }
+        // Get user by ID
+        [HttpGet("Getbyusername/{username}")]
+        public async Task<IActionResult> GetUserByUserName(string username)
+        {
+            var user = await _userService.GetUserByUserNameAsync(username);
+            var userDTO = await _userService.GetUserByIdAsync(user.Id);
+            if (user == null)
+                return NotFound("User not found.");
+
+            return Ok(userDTO);
+        }
 
         // Create a new user
         [HttpPost("create")]
@@ -50,11 +56,12 @@ namespace MNF_PORTAL_API.Controllers
         {
 
             var validator = new UserValidator();
-            var newuser = new DetailsUserDTO() 
-            {   Full_Name = model.Full_Name,
-                User_Name = model.User_Name, 
+            var newuser = new DetailsUserDTO()
+            {
+                Full_Name = model.Full_Name,
+                User_Name = model.User_Name,
                 Email = model.Email
-                
+
             };
             var validationResult = await validator.ValidateAsync(newuser);
 
@@ -71,12 +78,12 @@ namespace MNF_PORTAL_API.Controllers
 
             var user = new ApplicationUser
             {
-                FullName=model.Full_Name,
+                FullName = model.Full_Name,
                 UserName = model.User_Name,
                 Email = model.Email
             };
             var result = await _userService.CreateUserAsync(user, model.PassWord);
-            if (model.Roles != null) 
+            if (model.Roles != null)
             {
                 var UserWithRoles = new AddRoleToUserDTO
                 {
@@ -111,8 +118,31 @@ namespace MNF_PORTAL_API.Controllers
 
             bool result = await _userService.UpdateUserAsync(id, userDto);
             if (result) { return Ok("User Updated successfully."); }
-         
+
             return BadRequest("Invalid user ID or data.");
+        }
+
+        [HttpPut("UpdatebyUsername/{username}")]
+        public async Task<IActionResult> UpdateUserManagerbyusername(string username, [FromBody] DetailsUserDTO userDto)
+        {
+            if (string.IsNullOrEmpty(username) || userDto == null)
+            {
+                return BadRequest("Invalid user ID or data.");
+            }
+            var validator = new UserValidator();
+            var validationResult = await validator.ValidateAsync(userDto);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+            var user = await _userService.GetUserByUserNameAsync(username);
+
+            bool result = await _userService.UpdateUserAsync(user.Id, userDto);
+            if (result) { return Ok("User Updated successfully."); }
+
+            return BadRequest("Invalid Username or data.");
         }
 
 
@@ -120,12 +150,12 @@ namespace MNF_PORTAL_API.Controllers
         [HttpPost("AddRolesToUser")]
         public async Task<IActionResult> AddRolesToUser([FromBody] AddRoleToUserDTO model)
         {
-                if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
 
-               var result = await _userService.AddUserToRoleAsync(model);
-           
+            var result = await _userService.AddUserToRoleAsync(model);
+
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
@@ -156,6 +186,11 @@ namespace MNF_PORTAL_API.Controllers
             var user = await _userService.GetUserByUserNameAsync(dto.Username);
             if (user == null || !await _userService.CheckPasswordAsync(user, dto.Password))
                 return Unauthorized("Invalid credentials.");
+            if (!user.IsActive)
+            {
+                return Unauthorized("Your account is currently inactive. Please contact the administrator.");
+
+            }
 
             var roles = await _userService.GetUserRolesAsync(user);
             var token = jwtService.GenerateToken(user, roles);
@@ -179,7 +214,7 @@ namespace MNF_PORTAL_API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }

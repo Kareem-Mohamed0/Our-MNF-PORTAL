@@ -1,14 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MNF_PORTAL_Core;
 using MNF_PORTAL_Core.Entities;
-using MNF_PORTAL_Core.Interfaces_Repos;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MNF_PORTAL_Service.Services
 {
@@ -31,18 +25,19 @@ namespace MNF_PORTAL_Service.Services
                 Full_Name = userDB.FullName,
                 User_Name = userDB.UserName,
                 Email = userDB.Email,
-                Roles = roles
+                Roles = roles,
+                IsActive = userDB.IsActive
             };
-          
+
             return userDTO;
         }
 
         public async Task<IEnumerable<DetailsUserDTO>> GetAllUsersAsync()
         {
             IEnumerable<ApplicationUser> usersDB = await _unitOfWork.UserRepository.GetAllUsersAsync();
-           
+
             List<DetailsUserDTO> usersDTO = new List<DetailsUserDTO>();
-            foreach (ApplicationUser user in usersDB) 
+            foreach (ApplicationUser user in usersDB)
             {
                 IList<string> roles = await _unitOfWork.UserRepository.GetUserRolesAsync(user);
                 var userDTO = new DetailsUserDTO
@@ -51,16 +46,17 @@ namespace MNF_PORTAL_Service.Services
                     Full_Name = user.FullName,
                     User_Name = user.UserName,
                     Email = user.Email,
-                    Roles = roles
+                    Roles = roles,
+                    IsActive = user.IsActive
 
                 };
                 usersDTO.Add(userDTO);
             }
-           
+
             return usersDTO;
         }
 
-        public async Task<IdentityResult> CreateUserAsync(ApplicationUser user , string Password)
+        public async Task<IdentityResult> CreateUserAsync(ApplicationUser user, string Password)
         {
             IdentityResult result = await _unitOfWork.UserRepository.CreateUserAsync(user, Password);
             if (result.Succeeded)
@@ -68,7 +64,7 @@ namespace MNF_PORTAL_Service.Services
                 await _unitOfWork.CompleteAsync();
                 return result;
             }
-           
+
             return result;
         }
 
@@ -84,18 +80,19 @@ namespace MNF_PORTAL_Service.Services
 
         public async Task<bool> UpdateUserAsync(string userId, DetailsUserDTO userDto)
         {
-            
+
             // Find the user
             ApplicationUser user = await _unitOfWork.UserRepository.GetUserByIdAsync(userId);
 
-            if (user == null) 
+            if (user == null)
             {
-                return false ;
+                return false;
             }
             // Update user properties
             user.Email = userDto.Email;
             user.UserName = userDto.User_Name;
             user.FullName = userDto.Full_Name;
+            user.IsActive = userDto.IsActive;
             // Update user roles
             var userRoles = await _unitOfWork.UserRepository.GetUserRolesAsync(user);
             foreach (var role in userRoles)
@@ -116,7 +113,7 @@ namespace MNF_PORTAL_Service.Services
         public async Task<IdentityResult> AddUserToRoleAsync(AddRoleToUserDTO model)
         {
             var user = await _unitOfWork.UserRepository.GetUserByIdAsync(model.UserId);
-            if (user == null) 
+            if (user == null)
             {
                 return IdentityResult.Failed();
             }
@@ -153,9 +150,9 @@ namespace MNF_PORTAL_Service.Services
 
             if (!result.Succeeded)
                 throw new InvalidOperationException("Failed to remove user password.");
-            
+
             result = await _unitOfWork.UserRepository.AddUserPasswordAsync(user, newPassword);
-            
+
             return result;
         }
     }
