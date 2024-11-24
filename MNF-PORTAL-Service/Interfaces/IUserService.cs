@@ -20,5 +20,6 @@ namespace MNF_PORTAL_Service.Interfaces
         Task<bool> DeleteUserAsync(string userId);
         Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
+        Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string newPassword);
     }
 }

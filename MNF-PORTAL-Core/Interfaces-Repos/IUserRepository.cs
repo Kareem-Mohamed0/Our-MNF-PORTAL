@@ -20,6 +20,9 @@ namespace MNF_PORTAL_Core.Interfaces_Repos
         Task<IdentityResult> RemoveUserFromRoleAsync(ApplicationUser user, string role);
         Task<IdentityResult> DeleteUserAsync(ApplicationUser user);
         Task<bool>CheckPasswordAsync(ApplicationUser user, string password);
+        Task<IdentityResult> RemoveUserPasswordAsync(ApplicationUser user);
+        Task<IdentityResult> AddUserPasswordAsync(ApplicationUser user, string password);
+        Task<bool> UserIsExistsAsync(ApplicationUser user);
 
     }
 }

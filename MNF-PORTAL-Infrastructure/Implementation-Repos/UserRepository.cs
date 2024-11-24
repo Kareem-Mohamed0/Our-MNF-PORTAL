@@ -85,5 +85,20 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
         {
             return _userManager.CheckPasswordAsync(user, password);
         }
+
+        public async Task<IdentityResult> RemoveUserPasswordAsync(ApplicationUser user)
+        {
+            return await _userManager.RemovePasswordAsync(user);
+        }
+
+        public async Task<IdentityResult> AddUserPasswordAsync(ApplicationUser user, string password)
+        {
+            return await _userManager.AddPasswordAsync(user, password);
+        }
+
+        public async Task<bool> UserIsExistsAsync(ApplicationUser user)
+        {
+            return await _userManager.Users.AnyAsync(x => x.Id == user.Id);
+        }
     }
 }

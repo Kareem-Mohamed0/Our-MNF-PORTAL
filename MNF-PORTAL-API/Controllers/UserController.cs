@@ -162,6 +162,32 @@ namespace MNF_PORTAL_API.Controllers
 
             return Ok(new { Token = token });
         }
+        /*---------------------------------------- Reset Password ----------------------------------------*/
+        [HttpPut("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        {
+            try
+            {
+                var user = await _userService.GetUserByUserNameAsync(model.Username);
+                var result = await _userService.ChangePasswordAsync(user, model.NewPassword);
+                if (!result.Succeeded)
+                    return BadRequest(result.Errors);
+                return Ok("Password reset successfully.");
 
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Handle other unexpected exceptions
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

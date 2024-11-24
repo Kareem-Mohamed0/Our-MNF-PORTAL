@@ -142,5 +142,21 @@ namespace MNF_PORTAL_Service.Services
         {
             return _unitOfWork.UserRepository.GetUserRolesAsync(user);
         }
+
+        public async Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string newPassword)
+        {
+            if (user == null || string.IsNullOrEmpty(newPassword))
+                throw new ArgumentNullException(nameof(user), "User and new password cannot be null or empty.");
+            if (!await _unitOfWork.UserRepository.UserIsExistsAsync(user))
+                throw new ArgumentException("User does not exist.");
+            var result = await _unitOfWork.UserRepository.RemoveUserPasswordAsync(user);
+
+            if (!result.Succeeded)
+                throw new InvalidOperationException("Failed to remove user password.");
+            
+            result = await _unitOfWork.UserRepository.AddUserPasswordAsync(user, newPassword);
+            
+            return result;
+        }
     }
 }
