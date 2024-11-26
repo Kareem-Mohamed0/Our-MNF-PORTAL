@@ -1,7 +1,5 @@
-﻿
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MNF_PORTAL_Core.Constants;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
 using MNF_PORTAL_Service.Validators;
@@ -10,7 +8,7 @@ namespace MNF_PORTAL_API.Controllers
 
     [ApiController]
     [Route("API/Role")]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService RoleService;
@@ -34,7 +32,7 @@ namespace MNF_PORTAL_API.Controllers
                 }
 
                 var result = await RoleService.AddRoleAsync(RoleName);
-                if(!result)
+                if (!result)
                     return BadRequest("Role Is Not Added");
                 return Ok("Role Added  Successfully");
             }
@@ -49,7 +47,7 @@ namespace MNF_PORTAL_API.Controllers
             }
         }
 
-        
+
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -79,7 +77,7 @@ namespace MNF_PORTAL_API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -91,7 +89,7 @@ namespace MNF_PORTAL_API.Controllers
         }
 
         [HttpPut("UpdateRole")]
-        public async Task<IActionResult> UpdateRole([FromBody]UpdateRoleDTO model)
+        public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleDTO model)
         {
 
             var validator = new RoleValidator();
@@ -113,7 +111,7 @@ namespace MNF_PORTAL_API.Controllers
             }
             try
             {
-                var result = await RoleService.UpdateRoleAsync( model);
+                var result = await RoleService.UpdateRoleAsync(model);
                 if (!result)
                     return BadRequest("Role Is Not Updated");
                 return Ok("Role Updated  Successfully");
@@ -128,5 +126,95 @@ namespace MNF_PORTAL_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+
+        [HttpGet("GetAllPermissionsForRole/{RoleId}")]
+        public async Task<IActionResult> GetAllPermissionsForRole(string RoleId)
+        {
+            var Role = await RoleService.GetRoleByIdAsync(RoleId);
+            if (Role == null)
+                return BadRequest("Role Not Found");
+
+            var roleclaims = RoleService.GetclaimsAsync(Role.RoleName).Result;
+            var allClaims = Permissions.GenerateAllPermissions();
+            var allPermessions = allClaims.Select(p => new PermissionDTO { permission = p }).ToList();
+            foreach (var permission in allPermessions)
+            {
+                if (roleclaims.Any(c => c == permission.permission))
+                {
+                    permission.IsActive = true;
+                }
+                else
+                    permission.IsActive = false;
+            }
+
+            var RoleWithPermessions = new PermissionOfRolesDTO
+            {
+                RoleId = RoleId,
+                RoleName = Role.RoleName,
+                AllPermissions = allPermessions
+            };
+
+
+            return Ok(RoleWithPermessions);
+
+
+
+        }
+
+
+        /*
+        [HttpGet("UpdateAllPermissionsForRole/{RoleId}")]
+        public async Task<IActionResult> UpdateAllPermissionsForRole(string RoleId , [FromBody] PermissionOfRolesDTO model)
+        {
+            var Role = await RoleService.GetRoleByIdAsync(RoleId);
+            if (Role == null)
+                return BadRequest("Role Not Found");
+
+            var roleclaims = RoleService.GetclaimsAsync(Role.RoleName).Result;
+            foreach (var claim in roleclaims)
+            {
+                await RoleService.RemoveClaimFromRoleAsync(nRole, claim);
+
+            }
+
+
+
+
+
+
+
+
+
+            var allClaims = Permissions.GenerateAllPermissions();
+            model.AllPermissions = allClaims.Select(p => new PermissionDTO { permission = p }).ToList();
+            foreach (var permission in allPermessions)
+            {
+                if (roleclaims.Any(c => c == permission.permission))
+                {
+                    permission.IsActive = true;
+                }
+                else
+                    permission.IsActive = false;
+            }
+
+            var RoleWithPermessions = new PermissionOfRolesDTO
+            {
+                RoleId = RoleId,
+                RoleName = Role.RoleName,
+                AllPermissions = allPermessions
+            };
+
+
+            return Ok(RoleWithPermessions);
+
+
+
+        }
+
+        */
+
+
     }
 }

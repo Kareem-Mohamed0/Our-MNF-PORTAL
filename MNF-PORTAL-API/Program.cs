@@ -13,15 +13,15 @@ using MNF_PORTAL_Infrastructure.Data;
 using MNF_PORTAL_Infrastructure.Implementation_Repos;
 using MNF_PORTAL_Infrastructure.Repositories;
 using MNF_PORTAL_Service.Interfaces;
+using MNF_PORTAL_Service.Seeds;
 using MNF_PORTAL_Service.Services;
-using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 
 namespace MNF_PORTAL_API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -71,7 +71,7 @@ namespace MNF_PORTAL_API
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            
+
             builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
@@ -80,8 +80,9 @@ namespace MNF_PORTAL_API
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddTransient<IUserRepository,UserRepository>();
-            builder.Services.AddTransient<IUnitOfWork,UnitOfWork>();
+
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IJwtService, JwtService>();
 
@@ -136,9 +137,29 @@ namespace MNF_PORTAL_API
             }
             app.UseAuthentication();
             app.UseAuthorization();
-
-
             app.MapControllers();
+            /*----------- To Create Default Users and Roles -----------*/
+
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var loggerFactory = services.GetRequiredService<ILoggerProvider>();
+            var logger = loggerFactory.CreateLogger("app");
+            try
+            {
+                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                await DefaultRoles.SeedAsync(roleManager);
+                await DefaultUsers.SeedSuperAdminUserAsync(userManager, roleManager);
+                await DefaultUsers.SeedAdminUserAsync(userManager);
+                await DefaultUsers.SeedBasicUserAsync(userManager);
+
+                logger.LogInformation("Default Users and Roles created.");
+                logger.LogInformation("Application started.");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "An error occurred while seeding the database.");
+            }
 
             app.Run();
         }

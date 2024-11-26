@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using MNF_PORTAL_Core;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace MNF_PORTAL_Service.Services
 {
@@ -50,16 +45,16 @@ namespace MNF_PORTAL_Service.Services
         {
             var roles = await unitOfWork.RoleRepository.GetAllRolesAsync();
             var result = roles.Select(r => new DisplayRoleDTO
-                {
-                    RoleId = r.Id,
-                    RoleName = r.Name
-                }).ToList();
+            {
+                RoleId = r.Id,
+                RoleName = r.Name
+            }).ToList();
             return result;
         }
         /*=========================== Get Role By Id ==============================*/
         public async Task<DisplayRoleDTO> GetRoleByIdAsync(string RoleId)
         {
-            var Role =await unitOfWork.RoleRepository.GetRoleByIdAsync(RoleId);
+            var Role = await unitOfWork.RoleRepository.GetRoleByIdAsync(RoleId);
             var result = new DisplayRoleDTO()
             {
                 RoleId = Role.Id,
@@ -74,7 +69,7 @@ namespace MNF_PORTAL_Service.Services
             {
                 throw new ArgumentNullException(nameof(roleName), "Role name cannot be null or empty.");
             }
-            if(!await unitOfWork.RoleRepository.RoleIsExistAsync(roleName))
+            if (!await unitOfWork.RoleRepository.RoleIsExistAsync(roleName))
             {
                 throw new ArgumentException($"The role '{roleName}' does not exist.");
             }
@@ -103,6 +98,18 @@ namespace MNF_PORTAL_Service.Services
             }
             //return await unitOfWork.CompleteAsync();
             return true;
+        }
+
+
+        public async Task<List<string>> GetclaimsAsync(string RoleName)
+        {
+            return await unitOfWork.RoleRepository.GetclaimsAsync(RoleName);
+        }
+
+        public Task<IdentityResult> RemoveClaimFromRoleAsync(IdentityRole Role, Claim claim)
+        {
+            var result = unitOfWork.RoleRepository.RemoveClaimFromRoleAsync(Role, claim);
+            return result;
         }
     }
 }

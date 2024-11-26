@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MNF_PORTAL_Core.Interfaces_Repos;
-using MNF_PORTAL_Infrastructure.Data;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace MNF_PORTAL_Infrastructure.Repositories
 {
@@ -19,7 +14,7 @@ namespace MNF_PORTAL_Infrastructure.Repositories
             RoleManager<IdentityRole> roleManager
             )
         {
-            
+
             this.roleManager = roleManager;
         }
 
@@ -51,8 +46,8 @@ namespace MNF_PORTAL_Infrastructure.Repositories
 
         public async Task<bool> RoleIsExistAsync(string roleName)
         {
-                var role = await roleManager.FindByNameAsync(roleName);
-                return role != null;
+            var role = await roleManager.FindByNameAsync(roleName);
+            return role != null;
             // Returns true if role is found, false if not
         }
 
@@ -63,8 +58,18 @@ namespace MNF_PORTAL_Infrastructure.Repositories
             if (Role == null) return false;
             Role.Name = NewRoleName;
             Role.NormalizedName = NewRoleName.ToUpper();
-            var result =await roleManager.UpdateAsync(Role);
+            var result = await roleManager.UpdateAsync(Role);
             return true;
         }
+
+        public async Task<List<string>> GetclaimsAsync(string RoleName)
+        {
+            return roleManager.GetClaimsAsync(roleManager.FindByNameAsync(RoleName).Result).Result.Select(x => x.Value).ToList();
+        }
+        public async Task<IdentityResult> RemoveClaimFromRoleAsync(IdentityRole Role, Claim claim)
+        {
+            return await roleManager.RemoveClaimAsync(Role, claim);
+        }
+
     }
 }

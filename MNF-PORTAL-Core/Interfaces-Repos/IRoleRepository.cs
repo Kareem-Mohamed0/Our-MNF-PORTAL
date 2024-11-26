@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace MNF_PORTAL_Core.Interfaces_Repos
 {
@@ -15,5 +11,7 @@ namespace MNF_PORTAL_Core.Interfaces_Repos
         public Task<bool> RemoveRoleAsync(string roleName);
         public Task<bool> UpdateRoleAsync(string OldRoleName, string NewRoleName);
         public Task<bool> RoleIsExistAsync(string RoleName);
+        public Task<List<string>> GetclaimsAsync(string RoleName);
+        public Task<IdentityResult> RemoveClaimFromRoleAsync(IdentityRole Role, Claim claim);
     }
 }

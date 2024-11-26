@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Service.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MNF_PORTAL_Service.Interfaces
 {
@@ -21,5 +16,6 @@ namespace MNF_PORTAL_Service.Interfaces
         Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
         Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string newPassword);
+
     }
 }

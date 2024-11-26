@@ -1,19 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MNF_PORTAL_Service.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace MNF_PORTAL_Service.Interfaces
 {
     public interface IRoleService
     {
-        public Task<List<DisplayRoleDTO>> GetAllRolesAsync();
-        public Task<DisplayRoleDTO> GetRoleByIdAsync(string RoleId);
-        public Task<bool> AddRoleAsync(string role);
-        public Task<bool> RemoveRoleAsync(string roleName);
-        public Task<bool> UpdateRoleAsync(UpdateRoleDTO model);
+        Task<List<DisplayRoleDTO>> GetAllRolesAsync();
+        Task<DisplayRoleDTO> GetRoleByIdAsync(string RoleId);
+        Task<bool> AddRoleAsync(string role);
+        Task<bool> RemoveRoleAsync(string roleName);
+        Task<bool> UpdateRoleAsync(UpdateRoleDTO model);
+        Task<List<string>> GetclaimsAsync(string RoleName);
+        Task<IdentityResult> RemoveClaimFromRoleAsync(IdentityRole Role, Claim claim);
     }
 }
