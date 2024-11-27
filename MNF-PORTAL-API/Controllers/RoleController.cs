@@ -1,6 +1,4 @@
-﻿
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
@@ -19,6 +17,9 @@ namespace MNF_PORTAL_API.Controllers
         {
             this.RoleService = roleservice;
         }
+
+
+        /*=========================== Add Role ==============================*/
         [HttpPost("AddRole")]
         public async Task<IActionResult> AddRole([FromBody] string RoleName)
         {
@@ -34,7 +35,7 @@ namespace MNF_PORTAL_API.Controllers
                 }
 
                 var result = await RoleService.AddRoleAsync(RoleName);
-                if(!result)
+                if (!result)
                     return BadRequest("Role Is Not Added");
                 return Ok("Role Added  Successfully");
             }
@@ -49,7 +50,7 @@ namespace MNF_PORTAL_API.Controllers
             }
         }
 
-        
+        /*=========================== Get All Roles ==============================*/
         [HttpGet("GetAllRoles")]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -65,6 +66,7 @@ namespace MNF_PORTAL_API.Controllers
             return Ok(Roles);
         }
 
+        /*=========================== Delete Role ==============================*/
         [HttpDelete("DeleteRole")]
         public async Task<IActionResult> DeleteRole([FromBody] string RoleName)
         {
@@ -79,7 +81,7 @@ namespace MNF_PORTAL_API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -90,8 +92,9 @@ namespace MNF_PORTAL_API.Controllers
             }
         }
 
+        /*=========================== Update Role ==============================*/
         [HttpPut("UpdateRole")]
-        public async Task<IActionResult> UpdateRole([FromBody]UpdateRoleDTO model)
+        public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleDTO model)
         {
 
             var validator = new RoleValidator();
@@ -113,7 +116,7 @@ namespace MNF_PORTAL_API.Controllers
             }
             try
             {
-                var result = await RoleService.UpdateRoleAsync( model);
+                var result = await RoleService.UpdateRoleAsync(model);
                 if (!result)
                     return BadRequest("Role Is Not Updated");
                 return Ok("Role Updated  Successfully");

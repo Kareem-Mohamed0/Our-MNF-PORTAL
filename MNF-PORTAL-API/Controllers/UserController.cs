@@ -21,6 +21,7 @@ namespace MNF_PORTAL_API.Controllers
         }
 
 
+        /*=========================== Get All Users ==============================*/
         [HttpGet("all")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -28,7 +29,7 @@ namespace MNF_PORTAL_API.Controllers
             return Ok(users);
         }
 
-        // Get user by ID
+        /*=========================== Get User by ID ==============================*/
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {
@@ -38,7 +39,8 @@ namespace MNF_PORTAL_API.Controllers
 
             return Ok(user);
         }
-        // Get user by ID
+
+        /*=========================== Get User By Username ==============================*/
         [HttpGet("Getbyusername/{username}")]
         public async Task<IActionResult> GetUserByUserName(string username)
         {
@@ -50,7 +52,7 @@ namespace MNF_PORTAL_API.Controllers
             return Ok(userDTO);
         }
 
-        // Create a new user
+        /*=========================== Add User ==============================*/
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser([FromBody] RegisterUserDTO model)
         {
@@ -98,6 +100,8 @@ namespace MNF_PORTAL_API.Controllers
             return BadRequest(result.Errors);
         }
 
+
+        /*=========================== Update User By ID ==============================*/
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUserManager(string id, [FromBody] DetailsUserDTO userDto)
         {
@@ -122,6 +126,7 @@ namespace MNF_PORTAL_API.Controllers
             return BadRequest("Invalid user ID or data.");
         }
 
+        /*=========================== Update User By Username ==============================*/
         [HttpPut("UpdatebyUsername/{username}")]
         public async Task<IActionResult> UpdateUserManagerbyusername(string username, [FromBody] DetailsUserDTO userDto)
         {
@@ -146,7 +151,7 @@ namespace MNF_PORTAL_API.Controllers
         }
 
 
-
+        /*=========================== Add Roles To User ==============================*/
         [HttpPost("AddRolesToUser")]
         public async Task<IActionResult> AddRolesToUser([FromBody] AddRoleToUserDTO model)
         {
@@ -168,7 +173,7 @@ namespace MNF_PORTAL_API.Controllers
 
 
 
-        // Delete a user
+        /*=========================== Delete User By ID ==============================*/
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
@@ -179,7 +184,7 @@ namespace MNF_PORTAL_API.Controllers
             return Ok("User deleted successfully.");
         }
 
-        /*---------------------------------------- login ----------------------------------------*/
+        /*=========================== Login User ==============================*/
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
@@ -197,7 +202,7 @@ namespace MNF_PORTAL_API.Controllers
 
             return Ok(new { Token = token });
         }
-        /*---------------------------------------- Reset Password ----------------------------------------*/
+        /*=========================== Reset Password ==============================*/
         [HttpPut("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
         {

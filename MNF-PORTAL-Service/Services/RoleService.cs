@@ -1,13 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using MNF_PORTAL_Core;
+﻿using MNF_PORTAL_Core;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MNF_PORTAL_Service.Services
 {
@@ -19,7 +12,7 @@ namespace MNF_PORTAL_Service.Services
         {
             this.unitOfWork = unitOfWork;
         }
-        /*=========================== Add ==============================*/
+        /*=========================== Add Role ==============================*/
         public async Task<bool> AddRoleAsync(string role)
         {
             if (string.IsNullOrEmpty(role))
@@ -50,16 +43,16 @@ namespace MNF_PORTAL_Service.Services
         {
             var roles = await unitOfWork.RoleRepository.GetAllRolesAsync();
             var result = roles.Select(r => new DisplayRoleDTO
-                {
-                    RoleId = r.Id,
-                    RoleName = r.Name
-                }).ToList();
+            {
+                RoleId = r.Id,
+                RoleName = r.Name
+            }).ToList();
             return result;
         }
         /*=========================== Get Role By Id ==============================*/
         public async Task<DisplayRoleDTO> GetRoleByIdAsync(string RoleId)
         {
-            var Role =await unitOfWork.RoleRepository.GetRoleByIdAsync(RoleId);
+            var Role = await unitOfWork.RoleRepository.GetRoleByIdAsync(RoleId);
             var result = new DisplayRoleDTO()
             {
                 RoleId = Role.Id,
@@ -74,7 +67,7 @@ namespace MNF_PORTAL_Service.Services
             {
                 throw new ArgumentNullException(nameof(roleName), "Role name cannot be null or empty.");
             }
-            if(!await unitOfWork.RoleRepository.RoleIsExistAsync(roleName))
+            if (!await unitOfWork.RoleRepository.RoleIsExistAsync(roleName))
             {
                 throw new ArgumentException($"The role '{roleName}' does not exist.");
             }
