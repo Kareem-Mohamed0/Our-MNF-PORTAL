@@ -71,6 +71,10 @@ namespace MNF_PORTAL_Service.Services
             {
                 throw new ArgumentException($"The role '{roleName}' does not exist.");
             }
+            if (roleName == "SuperAdmin")
+            {
+                throw new InvalidOperationException(message: "SuperAdmin role cannot be deleted.");
+            }
             var result = await unitOfWork.RoleRepository.RemoveRoleAsync(roleName);
             if (!result)
             {
@@ -88,6 +92,10 @@ namespace MNF_PORTAL_Service.Services
             if (!await unitOfWork.RoleRepository.RoleIsExistAsync(model.OldRole))
             {
                 throw new ArgumentException($"The role '{model.OldRole}' does not exist.");
+            }
+            if (model.OldRole == "SuperAdmin")
+            {
+                throw new InvalidOperationException(message: "SuperAdmin role cannot be updated.");
             }
             var result = await unitOfWork.RoleRepository.UpdateRoleAsync(model.OldRole, model.NewRole);
             if (!result)

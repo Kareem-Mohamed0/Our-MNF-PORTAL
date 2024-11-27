@@ -21,7 +21,7 @@ namespace MNF_PORTAL_API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +84,8 @@ namespace MNF_PORTAL_API
             builder.Services.AddTransient<IUnitOfWork,UnitOfWork>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IJwtService, JwtService>();
+            builder.Services.AddScoped<IdentitySeeder>();
+
 
             /*====================================== Jwt Settings ======================================*/
 
@@ -136,9 +138,13 @@ namespace MNF_PORTAL_API
             }
             app.UseAuthentication();
             app.UseAuthorization();
-
-
             app.MapControllers();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<IdentitySeeder>();
+                await seeder.SeedAsync();
+            }
 
             app.Run();
         }

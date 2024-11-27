@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MNF_PORTAL_Core.Interfaces_Repos;
 using MNF_PORTAL_Infrastructure.Data;
+using MNF_PORTAL_Infrastructure.Implementation_Repos;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,13 +12,11 @@ using System.Threading.Tasks;
 
 namespace MNF_PORTAL_Infrastructure.Repositories
 {
-    public class RoleRepository : IRoleRepository
+    public class RoleRepository : GenericRepository<IdentityRole>, IRoleRepository
     {
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public RoleRepository(
-            RoleManager<IdentityRole> roleManager
-            )
+        public RoleRepository(RoleManager<IdentityRole> roleManager,AppDbContext context) : base(context)
         {
             
             this.roleManager = roleManager;

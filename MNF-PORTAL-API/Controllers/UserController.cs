@@ -177,11 +177,27 @@ namespace MNF_PORTAL_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var result = await _userService.DeleteUserAsync(id);
-            if (!result)
-                return NotFound("User not found.");
+            try
+            {
+                var result = await _userService.DeleteUserAsync(id);
+                if (!result)
+                    return NotFound("User not found.");
 
-            return Ok("User deleted successfully.");
+                return Ok("User deleted successfully.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Couldn't delete user.");
+            }
+
         }
 
         /*=========================== Login User ==============================*/

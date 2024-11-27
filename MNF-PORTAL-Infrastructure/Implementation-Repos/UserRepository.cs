@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MNF_PORTAL_Core.Entities;
 using MNF_PORTAL_Core.Interfaces_Repos;
+using MNF_PORTAL_Infrastructure.Data;
 using MNF_PORTAL_Service.DTOs;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace MNF_PORTAL_Infrastructure.Implementation_Repos
 {
-    public class UserRepository :IUserRepository
+    public class UserRepository : GenericRepository<ApplicationUser>,IUserRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserRepository(UserManager<ApplicationUser> userManager)
+        public UserRepository(UserManager<ApplicationUser> userManager, AppDbContext context) : base(context)
         {
             _userManager = userManager;
         }
@@ -74,10 +75,6 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
         public async Task<ApplicationUser> GetUserByUserNameAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
-            if(user == null)
-            {
-                throw new Exception("User not found");
-            }
             return user;
         }
 
@@ -99,6 +96,10 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
         public async Task<bool> UserIsExistsAsync(ApplicationUser user)
         {
             return await _userManager.Users.AnyAsync(x => x.Id == user.Id);
+        }
+        public async Task<bool> IsUserHaveRoleAsync(ApplicationUser user, string roleName)
+        {
+            return await _userManager.IsInRoleAsync(user, roleName);
         }
     }
 }
