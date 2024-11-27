@@ -71,8 +71,11 @@ namespace MNF_PORTAL_Service.Services
         public async Task<bool> DeleteUserAsync(string userId)
         {
             var user = await _unitOfWork.UserRepository.GetUserByIdAsync(userId);
-            if (user == null) return false;
-
+            if (user == null) throw new ArgumentException("User not found.");
+            if (await _unitOfWork.UserRepository.IsUserHaveRoleAsync(user, "SuperAdmin"))
+            {
+                throw new InvalidOperationException("SuperAdmin user cannot be deleted.");
+            }
             await _unitOfWork.UserRepository.DeleteUserAsync(user);
             await _unitOfWork.CompleteAsync();
             return true;

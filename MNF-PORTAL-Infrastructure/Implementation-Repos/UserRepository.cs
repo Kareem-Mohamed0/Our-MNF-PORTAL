@@ -75,10 +75,6 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
         public async Task<ApplicationUser> GetUserByUserNameAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
-            if(user == null)
-            {
-                throw new Exception("User not found");
-            }
             return user;
         }
 
@@ -100,6 +96,10 @@ namespace MNF_PORTAL_Infrastructure.Implementation_Repos
         public async Task<bool> UserIsExistsAsync(ApplicationUser user)
         {
             return await _userManager.Users.AnyAsync(x => x.Id == user.Id);
+        }
+        public async Task<bool> IsUserHaveRoleAsync(ApplicationUser user, string roleName)
+        {
+            return await _userManager.IsInRoleAsync(user, roleName);
         }
     }
 }
