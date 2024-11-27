@@ -21,36 +21,7 @@ namespace MNF_PORTAL_API.Controllers
         }
 
 
-        /*=========================== Get All Users ==============================*/
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var users = await _userService.GetAllUsersAsync();
-            return Ok(users);
-        }
 
-        /*=========================== Get User by ID ==============================*/
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(string id)
-        {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
-                return NotFound("User not found.");
-
-            return Ok(user);
-        }
-
-        /*=========================== Get User By Username ==============================*/
-        [HttpGet("Getbyusername/{username}")]
-        public async Task<IActionResult> GetUserByUserName(string username)
-        {
-            var user = await _userService.GetUserByUserNameAsync(username);
-            var userDTO = await _userService.GetUserByIdAsync(user.Id);
-            if (user == null)
-                return NotFound("User not found.");
-
-            return Ok(userDTO);
-        }
 
         /*=========================== Add User ==============================*/
         [HttpPost("create")]
@@ -60,7 +31,8 @@ namespace MNF_PORTAL_API.Controllers
             var validator = new UserValidator();
             var newuser = new DetailsUserDTO()
             {
-                Full_Name = model.Full_Name,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 User_Name = model.User_Name,
                 Email = model.Email
 
@@ -80,7 +52,8 @@ namespace MNF_PORTAL_API.Controllers
 
             var user = new ApplicationUser
             {
-                FullName = model.Full_Name,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 UserName = model.User_Name,
                 Email = model.Email
             };
@@ -101,7 +74,65 @@ namespace MNF_PORTAL_API.Controllers
         }
 
 
+
+
+        /*=========================== Login User ==============================*/
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        {
+            var user = await _userService.GetUserByUserNameAsync(dto.Username);
+            if (user == null || !await _userService.CheckPasswordAsync(user, dto.Password))
+                return Unauthorized("Invalid credentials.");
+            if (!user.IsActive)
+            {
+                return Unauthorized("Your account is currently inactive. Please contact the administrator.");
+
+            }
+
+            var roles = await _userService.GetUserRolesAsync(user);
+            var token = jwtService.GenerateToken(user, roles);
+
+            return Ok(new { Token = token });
+        }
+
+
+
+        /*=========================== Get All Users ==============================*/
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users);
+        }
+
+        /*=========================== Get User by ID ==============================*/
+        /*
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound("User not found.");
+
+            return Ok(user);
+        }
+        */
+        /*=========================== Get User By Username ==============================*/
+        [HttpGet("Getbyusername/{username}")]
+        public async Task<IActionResult> GetUserByUserName(string username)
+        {
+            var user = await _userService.GetUserByUserNameAsync(username);
+            var userDTO = await _userService.GetUserByIdAsync(user.Id);
+            if (user == null)
+                return NotFound("User not found.");
+
+            return Ok(userDTO);
+        }
+
+
+
         /*=========================== Update User By ID ==============================*/
+        /*
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUserManager(string id, [FromBody] DetailsUserDTO userDto)
         {
@@ -125,7 +156,7 @@ namespace MNF_PORTAL_API.Controllers
 
             return BadRequest("Invalid user ID or data.");
         }
-
+        */
         /*=========================== Update User By Username ==============================*/
         [HttpPut("UpdatebyUsername/{username}")]
         public async Task<IActionResult> UpdateUserManagerbyusername(string username, [FromBody] DetailsUserDTO userDto)
@@ -150,74 +181,6 @@ namespace MNF_PORTAL_API.Controllers
             return BadRequest("Invalid Username or data.");
         }
 
-
-        /*=========================== Add Roles To User ==============================*/
-        [HttpPost("AddRolesToUser")]
-        public async Task<IActionResult> AddRolesToUser([FromBody] AddRoleToUserDTO model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-
-            var result = await _userService.AddUserToRoleAsync(model);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok("Roles added to User successfully.");
-        }
-
-
-
-
-
-        /*=========================== Delete User By ID ==============================*/
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
-        {
-            try
-            {
-                var result = await _userService.DeleteUserAsync(id);
-                if (!result)
-                    return NotFound("User not found.");
-
-                return Ok("User deleted successfully.");
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return BadRequest("Couldn't delete user.");
-            }
-
-        }
-
-        /*=========================== Login User ==============================*/
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
-        {
-            var user = await _userService.GetUserByUserNameAsync(dto.Username);
-            if (user == null || !await _userService.CheckPasswordAsync(user, dto.Password))
-                return Unauthorized("Invalid credentials.");
-            if (!user.IsActive)
-            {
-                return Unauthorized("Your account is currently inactive. Please contact the administrator.");
-
-            }
-
-            var roles = await _userService.GetUserRolesAsync(user);
-            var token = jwtService.GenerateToken(user, roles);
-
-            return Ok(new { Token = token });
-        }
         /*=========================== Reset Password ==============================*/
         [HttpPut("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
@@ -245,5 +208,65 @@ namespace MNF_PORTAL_API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        /*=========================== Delete User By ID ==============================*/
+        /*
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            try
+            {
+                var result = await _userService.DeleteUserAsync(id);
+                if (!result)
+                    return NotFound("User not found.");
+
+                return Ok("User deleted successfully.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Couldn't delete user.");
+            }
+
+        }
+        */
+        /*=========================== Delete User By Username ==============================*/
+        [HttpDelete("DeleteUser/{username}")]
+        public async Task<IActionResult> DeleteUser(string username)
+        {
+
+            try
+            {
+                var user = await _userService.GetUserByUserNameAsync(username);
+                var result = await _userService.DeleteUserAsync(user.Id);
+                if (!result)
+                    return NotFound("User not found.");
+
+                return Ok("User deleted successfully.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Couldn't delete user.");
+            }
+
+        }
+
+
+
     }
 }

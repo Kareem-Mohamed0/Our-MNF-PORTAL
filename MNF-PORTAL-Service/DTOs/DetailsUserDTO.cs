@@ -3,7 +3,8 @@
     public class DetailsUserDTO
     {
         public string User_Id { get; set; }
-        public string Full_Name { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string User_Name { get; set; }
         public string Email { get; set; }
         public IList<string> Roles { get; set; }

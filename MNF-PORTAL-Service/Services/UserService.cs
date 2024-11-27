@@ -22,7 +22,8 @@ namespace MNF_PORTAL_Service.Services
             var userDTO = new DetailsUserDTO
             {
                 User_Id = userDB.Id,
-                Full_Name = userDB.FullName,
+                FirstName = userDB.FirstName,
+                LastName = userDB.LastName,
                 User_Name = userDB.UserName,
                 Email = userDB.Email,
                 Roles = roles,
@@ -43,7 +44,8 @@ namespace MNF_PORTAL_Service.Services
                 var userDTO = new DetailsUserDTO
                 {
                     User_Id = user.Id,
-                    Full_Name = user.FullName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     User_Name = user.UserName,
                     Email = user.Email,
                     Roles = roles,
@@ -94,7 +96,8 @@ namespace MNF_PORTAL_Service.Services
             // Update user properties
             user.Email = userDto.Email;
             user.UserName = userDto.User_Name;
-            user.FullName = userDto.Full_Name;
+            user.FirstName = userDto.FirstName;
+            user.LastName = userDto.LastName;
             user.IsActive = userDto.IsActive;
             // Update user roles
             var userRoles = await _unitOfWork.UserRepository.GetUserRolesAsync(user);

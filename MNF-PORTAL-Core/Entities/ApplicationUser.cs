@@ -4,7 +4,8 @@ namespace MNF_PORTAL_Core.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

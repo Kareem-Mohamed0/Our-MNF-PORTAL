@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MNF_PORTAL_Service.DTOs;
 using MNF_PORTAL_Service.Interfaces;
 using MNF_PORTAL_Service.Validators;
@@ -66,32 +65,6 @@ namespace MNF_PORTAL_API.Controllers
             return Ok(Roles);
         }
 
-        /*=========================== Delete Role ==============================*/
-        [HttpDelete("DeleteRole")]
-        public async Task<IActionResult> DeleteRole([FromBody] string RoleName)
-        {
-            try
-            {
-                var result = await RoleService.RemoveRoleAsync(RoleName);
-                if (!result)
-                    return BadRequest("Role Is Not Deleted");
-                return Ok("Role Deleted  Successfully");
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                // Handle other unexpected exceptions
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
         /*=========================== Update Role ==============================*/
         [HttpPut("UpdateRole")]
         public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleDTO model)
@@ -122,6 +95,32 @@ namespace MNF_PORTAL_API.Controllers
                 return Ok("Role Updated  Successfully");
             }
             catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Handle other unexpected exceptions
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /*=========================== Delete Role ==============================*/
+        [HttpDelete("DeleteRole")]
+        public async Task<IActionResult> DeleteRole([FromBody] string RoleName)
+        {
+            try
+            {
+                var result = await RoleService.RemoveRoleAsync(RoleName);
+                if (!result)
+                    return BadRequest("Role Is Not Deleted");
+                return Ok("Role Deleted  Successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
