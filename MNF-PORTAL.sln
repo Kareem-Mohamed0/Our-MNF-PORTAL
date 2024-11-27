@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNF-PORTAL-API", "MNF-PORTAL-API\MNF-PORTAL-API.csproj", "{F92BFC8C-5A8D-46D9-BDD9-FBA1742A6F41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "MNF-PORTAL-API\API.csproj", "{F92BFC8C-5A8D-46D9-BDD9-FBA1742A6F41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNF-PORTAL-Infrastructure", "MNF-PORTAL-Infrastructure\MNF-PORTAL-Infrastructure.csproj", "{4A6AB47F-A0F1-44F9-985A-A32D6C2EC543}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "MNF-PORTAL-Infrastructure\Infrastructure.csproj", "{4A6AB47F-A0F1-44F9-985A-A32D6C2EC543}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNF-PORTAL-Service", "MNF-PORTAL-Service\MNF-PORTAL-Service.csproj", "{6764A2A5-A386-4A95-970A-A15537B3F829}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "MNF-PORTAL-Service\Application.csproj", "{6764A2A5-A386-4A95-970A-A15537B3F829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNF-PORTAL-Core", "MNF-PORTAL-Core\MNF-PORTAL-Core.csproj", "{FBAC5209-E5AF-4723-9669-A601F91C6813}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "MNF-PORTAL-Core\Domain.csproj", "{FBAC5209-E5AF-4723-9669-A601F91C6813}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

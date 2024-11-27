@@ -8,7 +8,7 @@ namespace MNF_PORTAL_API.Controllers
 
     [ApiController]
     [Route("API/Role")]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService RoleService;
